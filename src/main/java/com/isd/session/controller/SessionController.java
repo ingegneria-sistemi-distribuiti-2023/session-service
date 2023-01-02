@@ -1,8 +1,7 @@
-package com.isd.authentication.controller;
+package com.isd.session.controller;
 
-import com.isd.authentication.domain.Session;
-import com.isd.authentication.dto.SessionDTO;
-import com.isd.authentication.service.SessionService;
+import com.isd.session.dto.SessionDTO;
+import com.isd.session.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

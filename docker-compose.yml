@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  authentication_db:
+  session_db:
     image: mysql:8.0
     restart: always
     ports:
@@ -11,9 +11,9 @@ services:
       - '3306'
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: authdb
-      MYSQL_USER: admin1
-      MYSQL_PASSWORD: admin1
+      MYSQL_DATABASE: sessiondb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
     volumes:
       - "./db/schema.sql:/docker-entrypoint-initdb.d/1.sql"
       - "./db/data.sql:/docker-entrypoint-initdb.d/2.sql"
@@ -30,13 +30,13 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      authentication_db:
+      session_db:
         condition: service_healthy
-    image: authentication-service:latest
+    image: session-service:latest
     restart: always
     ports:
-      - 8081:8081
+      - 8080:8080
     environment:
       JDBC_DATABASE_URL: jdbc:mysql://session_db:3306/sessiondb?allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
-      JDBC_DATABASE_PASSWORD: admin1
-      JDBC_DATABASE_USERNAME: admin1
+      JDBC_DATABASE_PASSWORD: admin
+      JDBC_DATABASE_USERNAME: admin

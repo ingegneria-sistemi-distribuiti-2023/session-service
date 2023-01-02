@@ -1,9 +1,9 @@
-package com.isd.authentication.service;
+package com.isd.session.service;
 
-import com.isd.authentication.converter.SessionConverter;
-import com.isd.authentication.domain.Session;
-import com.isd.authentication.dto.SessionDTO;
-import com.isd.authentication.repository.SessionRepository;
+import com.isd.session.converter.SessionConverter;
+import com.isd.session.domain.Session;
+import com.isd.session.dto.SessionDTO;
+import com.isd.session.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

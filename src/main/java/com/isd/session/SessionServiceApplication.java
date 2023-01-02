@@ -1,4 +1,4 @@
-package com.isd.authentication;
+package com.isd.session;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

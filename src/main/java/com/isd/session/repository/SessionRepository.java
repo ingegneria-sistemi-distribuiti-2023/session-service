@@ -1,6 +1,6 @@
-package com.isd.authentication.repository;
+package com.isd.session.repository;
 
-import com.isd.authentication.domain.Session;
+import com.isd.session.domain.Session;
 import org.springframework.data.jpa.repository.JpaRepository;
 //import org.springframework.stereotype.Repository;
 

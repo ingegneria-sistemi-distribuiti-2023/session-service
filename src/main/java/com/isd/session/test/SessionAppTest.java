@@ -1,4 +1,4 @@
-package com.isd.authentication.test;
+package com.isd.session.test;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
-package com.isd.authentication.converter;
+package com.isd.session.converter;
 
-import com.isd.authentication.domain.Session;
-import com.isd.authentication.dto.SessionDTO;
+import com.isd.session.domain.Session;
+import com.isd.session.dto.SessionDTO;
 
 public class SessionConverter {
 

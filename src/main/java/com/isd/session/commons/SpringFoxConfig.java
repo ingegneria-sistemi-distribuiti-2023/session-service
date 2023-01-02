@@ -1,4 +1,4 @@
-package com.isd.authentication.commons;
+package com.isd.session.commons;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

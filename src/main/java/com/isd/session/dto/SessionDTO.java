@@ -1,7 +1,7 @@
-package com.isd.authentication.dto;
+package com.isd.session.dto;
 
 
-import com.isd.authentication.domain.Session;
+import com.isd.session.domain.Session;
 
 import java.sql.Timestamp;
 

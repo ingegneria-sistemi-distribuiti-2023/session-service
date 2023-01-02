@@ -1,4 +1,4 @@
-package com.isd.authentication.domain;
+package com.isd.session.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
