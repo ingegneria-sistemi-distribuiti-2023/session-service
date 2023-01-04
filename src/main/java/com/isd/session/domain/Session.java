@@ -16,7 +16,7 @@ public class Session {
     private String sessionId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
     @Lob
     private byte[] data;
     @Column(name = "start_time")
@@ -24,5 +24,22 @@ public class Session {
     @Column(name = "end_time")
     private Timestamp endTime;
 
-    // Getters and setters
+    public Session() {
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean same = false;
+
+        if (obj != null && obj instanceof Session){
+            same = this.sessionId == ((Session) obj).getSessionId() &&
+                    this.userId == ((Session) obj).getUserId() &&
+                    this.data == ((Session) obj).getData() &&
+                    this.startTime == ((Session) obj).getStartTime() &&
+                    this.endTime == ((Session) obj).getEndTime();
+        }
+
+        return same;
+    }
+
 }

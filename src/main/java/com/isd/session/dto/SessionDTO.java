@@ -7,19 +7,12 @@ import java.sql.Timestamp;
 
 public class SessionDTO {
     private String sessionId;
-    private Long userId;
+    private Integer userId;
     private byte[] data;
     private Timestamp startTime;
     private Timestamp endTime;
 
-    public static SessionDTO fromEntity(Session session) {
-        SessionDTO dto = new SessionDTO();
-        dto.setSessionId(session.getSessionId());
-        dto.setUserId(session.getUserId());
-        dto.setData(session.getData());
-        dto.setStartTime(session.getStartTime());
-        dto.setEndTime(session.getEndTime());
-        return dto;
+    public SessionDTO() {
     }
 
     public String getSessionId() {
@@ -30,11 +23,11 @@ public class SessionDTO {
         this.sessionId = sessionId;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
