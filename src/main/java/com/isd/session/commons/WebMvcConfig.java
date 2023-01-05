@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer{
 
-    private final String baseUrl = "http://localhost:8080";
+    private final String baseUrl = "http://localhost:8084";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

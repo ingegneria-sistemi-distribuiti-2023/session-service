@@ -11,13 +11,16 @@ services:
     image: session-service:latest
     restart: always
     ports:
-      - 8080:8080
+      - 8084:8084
     environment:
       JDBC_DATABASE_URL: jdbc:mysql://session_db:3306/sessiondb?allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
       JDBC_DATABASE_PASSWORD: admin
       JDBC_DATABASE_USERNAME: admin
     networks:
       - session-network
+      - session-db-network
 networks: 
   session-network:
     name: session-network
+  session-db-network:
+    name: session-db-network
