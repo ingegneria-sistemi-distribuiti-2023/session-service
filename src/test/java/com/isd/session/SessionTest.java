@@ -30,7 +30,6 @@ public class SessionTest {
     @InjectMocks
     SessionService sessionService;
 
-
     @Before
     public void setup() {
         // initialize i mock object
@@ -45,7 +44,7 @@ public class SessionTest {
         Session s1 = new Session();
         s1.setSessionId("abc");
         s1.setUserId(1);
-        byte[] s1bytes = "Any String you want".getBytes();
+        byte[] s1bytes = "Coded string 2".getBytes();
         s1.setData(s1bytes);
 
         Date session_start = new Date();
@@ -58,7 +57,7 @@ public class SessionTest {
         Session s2 = new Session();
         s2.setSessionId("efg");
         s2.setUserId(1);
-        byte[] s2bytes = "Any String you want edited".getBytes();
+        byte[] s2bytes = "Coded string 2".getBytes();
         s2.setData(s2bytes);
         s2.setStartTime(new Timestamp(session_start.getTime()));
         s2.setEndTime(new Timestamp(session_expiry.getTime()));
