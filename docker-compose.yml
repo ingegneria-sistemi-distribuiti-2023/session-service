@@ -19,8 +19,13 @@ services:
     networks:
       - session-network
       - session-db-network
+    volumes:
+      - maven_packages:/root/.m2
 networks: 
   session-network:
     name: session-network
   session-db-network:
     name: session-db-network
+volumes:
+  maven_packages:
+    name: maven_packages
