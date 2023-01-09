@@ -1,8 +1,5 @@
 package com.isd.session.dto;
 
-
-import com.isd.session.domain.Session;
-
 import java.sql.Timestamp;
 
 public class SessionDTO {
