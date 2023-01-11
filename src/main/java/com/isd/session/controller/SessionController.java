@@ -92,8 +92,8 @@ public class SessionController {
     }
 
 
-    @GetMapping(value="/")
-    public UserDataDTO getSession(@RequestParam(required = true) String id) {
+    @GetMapping(value="/{id}")
+    public UserDataDTO getSession(@PathVariable("id") String id) {
         // TODO: aggiornare scadenza sessione
         
         if(id == null) {
