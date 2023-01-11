@@ -1,14 +1,17 @@
 package com.isd.session.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class BetDTO {
+import com.isd.session.commons.CurrencyEnum;
+
+public class BetDTO implements Serializable{
     private int betValue;
-    private String currency;
+    private CurrencyEnum currency;
     private List<GameDTO> games;
     private long ts;
 
-    public BetDTO(int betValue, String currency, List<GameDTO> games, long ts) {
+    public BetDTO(int betValue, CurrencyEnum currency, List<GameDTO> games, long ts) {
         this.betValue = betValue;
         this.currency = currency;
         this.games = games;
@@ -24,12 +27,12 @@ public class BetDTO {
         this.betValue = betValue;
     }
 
-    public String getCurrency() {
+    public CurrencyEnum getCurrency() {
         return currency;
     }
 
     //set currency
-    public void setCurrency(String currency) {
+    public void setCurrency(CurrencyEnum currency) {
         this.currency = currency;
     }
 

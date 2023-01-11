@@ -1,4 +1,5 @@
 package com.isd.session.dto;
+import java.io.Serializable;
 // this class is a mapping for the following JSON:
 /*
   "user_data": {
@@ -23,16 +24,16 @@ package com.isd.session.dto;
  */
 import java.util.List;
 
-public class UserDataDTO {
-    private int userId;
+public class UserDataDTO implements Serializable {
+    private Integer userId;
     private List<BetDTO> listOfBets;
 
     // getters and setters
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

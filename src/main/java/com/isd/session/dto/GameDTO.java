@@ -1,8 +1,10 @@
 package com.isd.session.dto;
 
+import java.io.Serializable;
+
 import com.isd.session.commons.OutcomeEnum;
 
-public class GameDTO {
+public class GameDTO implements Serializable{
     private int gameId;
     private OutcomeEnum outcome;
     private double quoteAtTimeOfBet;
