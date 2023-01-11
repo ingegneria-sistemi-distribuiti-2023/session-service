@@ -25,8 +25,12 @@ import java.io.Serializable;
 import java.util.List;
 
 public class UserDataDTO implements Serializable {
+    private static final long serialVersionUID = 6529685099997757690L;
     private Integer userId;
     private List<BetDTO> listOfBets;
+
+    public UserDataDTO() {
+    }
 
     // getters and setters
     public Integer getUserId() {

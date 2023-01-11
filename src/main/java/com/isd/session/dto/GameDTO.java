@@ -5,10 +5,14 @@ import java.io.Serializable;
 import com.isd.session.commons.OutcomeEnum;
 
 public class GameDTO implements Serializable{
+    private static final long serialVersionUID = 6529685064657757690L;
     private int gameId;
     private OutcomeEnum outcome;
     private double quoteAtTimeOfBet;
     private long ts;
+
+    public GameDTO() {
+    }
 
     public GameDTO(int gameId, OutcomeEnum outcome, double quoteAtTimeOfBet, long ts) {
         this.gameId = gameId;

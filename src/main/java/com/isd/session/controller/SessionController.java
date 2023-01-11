@@ -20,6 +20,7 @@ import com.isd.session.dto.GameDTO;
 import com.isd.session.dto.UserDataDTO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 
 
@@ -66,24 +67,51 @@ public class SessionController {
     }
 
 
-    // @PostMapping(value="/session")
-    // public UserDataDTO createAndUpdateSession(@RequestBody UserDataDTO entity, @RequestHeader(value = "Session-Id") String sessionId) {
-        
-    //     if(sessionId == null) {
-    //         // generate a new session id if 
-    //         sessionId = UUID.randomUUID().toString();
-    //     }
+    @PostMapping(value="/")
+    public UserDataDTO createAndUpdateSession(@RequestBody UserDataDTO entity, @RequestHeader(value = "Session-Id", required = false) String headerSessionId) {
+        // if the session id is provided in the header, update the session
+        // TODO: aggiornare scadenza sessione
 
-    //     HttpHeaders headers = new HttpHeaders();
-    //     headers.set("Session-Id", sessionId);
-    //     headers.setContentType(MediaType.APPLICATION_JSON);
+        String sessionId = headerSessionId;
+        if(headerSessionId == null) {
+            // generate a new session id if a new session is being created
+            sessionId = UUID.randomUUID().toString();
+        }
 
-    //     // Create a new ResponseEntity with the headers and the response body.
-    //     ResponseEntity<UserDataDTO> response = new ResponseEntity<>(session, headers, HttpStatus.OK);
+        // save the session to the redis database
+        redisTemplate.opsForValue().set(sessionId, entity);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Session-Id", sessionId);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create a new ResponseEntity with the headers and the response body.
+        ResponseEntity<UserDataDTO> response = new ResponseEntity<>(entity, headers, HttpStatus.OK);
         
-    //     // Create a new ResponseEntity with the headers and the response body.
-    //     ResponseEntity<UserDataDTO> response = new ResponseEntity<>(session, headers, HttpStatus.OK);
+        return response.getBody();
+    }
+
+
+    @GetMapping(value="/")
+    public UserDataDTO getSession(@RequestParam(required = true) String id) {
+        // TODO: aggiornare scadenza sessione
         
-    //     return entity;
-    // }
+        if(id == null) {
+            // return 404 error if the session id is not provided
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "entity not found"
+            );
+        }
+        // get the session from the redis database
+        UserDataDTO session = redisTemplate.opsForValue().get(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Session-Id", id);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create a new ResponseEntity with the headers and the response body.
+        ResponseEntity<UserDataDTO> response = new ResponseEntity<>(session, headers, HttpStatus.OK);
+        
+        return response.getBody();
+    }
 }

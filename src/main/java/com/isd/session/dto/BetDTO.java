@@ -6,10 +6,14 @@ import java.util.List;
 import com.isd.session.commons.CurrencyEnum;
 
 public class BetDTO implements Serializable{
+    private static final long serialVersionUID = 6529665465167757690L;
     private int betValue;
     private CurrencyEnum currency;
     private List<GameDTO> games;
     private long ts;
+
+    public BetDTO() {
+    }
 
     public BetDTO(int betValue, CurrencyEnum currency, List<GameDTO> games, long ts) {
         this.betValue = betValue;
