@@ -76,6 +76,7 @@ public class SessionController {
         if(headerSessionId == null) {
             // generate a new session id if a new session is being created
             sessionId = UUID.randomUUID().toString();
+            entity.setSessionId(sessionId);
         }
 
         // save the session to the redis database
