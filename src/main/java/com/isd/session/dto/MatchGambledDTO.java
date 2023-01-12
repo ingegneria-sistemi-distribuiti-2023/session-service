@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 import com.isd.session.commons.OutcomeEnum;
 
-public class GameDTO implements Serializable{
+public class MatchGambledDTO implements Serializable{
     private static final long serialVersionUID = 6529685064657757690L;
     private int gameId;
     private OutcomeEnum outcome;
     private double quoteAtTimeOfBet;
     private long ts;
 
-    public GameDTO() {
+    public MatchGambledDTO() {
     }
 
-    public GameDTO(int gameId, OutcomeEnum outcome, double quoteAtTimeOfBet, long ts) {
+    public MatchGambledDTO(int gameId, OutcomeEnum outcome, double quoteAtTimeOfBet, long ts) {
         this.gameId = gameId;
         this.outcome = outcome;
         this.quoteAtTimeOfBet = quoteAtTimeOfBet;
@@ -54,7 +54,7 @@ public class GameDTO implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GameDTO gameDTO = (GameDTO) o;
+        MatchGambledDTO gameDTO = (MatchGambledDTO) o;
 
         if (gameId != gameDTO.gameId) return false;
         if (Double.compare(gameDTO.quoteAtTimeOfBet, quoteAtTimeOfBet) != 0) return false;

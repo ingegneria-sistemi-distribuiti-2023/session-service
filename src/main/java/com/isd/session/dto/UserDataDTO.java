@@ -1,33 +1,15 @@
 package com.isd.session.dto;
+
+import com.isd.session.dto.BetDTO;
+
 import java.io.Serializable;
-// this class is a mapping for the following JSON:
-/*
-  "user_data": {
-        "userId": 1,
-        "list_of_bets": [
-            {
-                "betValue": 10,
-                "currency": "EUR",
-                "games": [
-                    // … list of games {gameId, outcome, quoteAtTimeOfBet} …
-                    {
-                        "gameId": 1,
-                        "outcome": "1", // TODO: creare enum per gli outcome (1, X, 2)
-                        "quoteAtTimeOfBet": 1.73,
-                        "ts": 18928932
-                    }
-                ],
-                "ts": 18928932
-            }
-        ]
-    },
- */
 import java.util.List;
 
 public class UserDataDTO implements Serializable {
     private static final long serialVersionUID = 6529685099997757690L;
     private Integer userId;
     private List<BetDTO> listOfBets;
+    private static int MAX_BETS = 2;
 
     public UserDataDTO() {
     }
@@ -47,6 +29,30 @@ public class UserDataDTO implements Serializable {
 
     public void setListOfBets(List<BetDTO> listOfBets) {
         this.listOfBets = listOfBets;
+    }
+
+    public void addBet(BetDTO bet) throws Exception {
+        // Check if the number of bets in the list is less than or equal to 3
+        if (listOfBets.size() <= MAX_BETS) {
+            // Iterate through the list of bets
+            if (listOfBets.contains(bet)){
+                throw new Exception("Bet is the same");
+            }
+
+            listOfBets.add(bet);
+        } else {
+            throw new Exception("Cannot add more than 3 bets to the list.");
+        }
+    }
+
+    public void removeBet(BetDTO bet) throws Exception {
+        // Check if the bet is present in the listOfBets
+        if (listOfBets.contains(bet)) {
+            // If it is, remove the bet from the listOfBets
+            listOfBets.remove(bet);
+        } else {
+            throw new Exception("Bet not found in the list.");
+        }
     }
 
     // toString override

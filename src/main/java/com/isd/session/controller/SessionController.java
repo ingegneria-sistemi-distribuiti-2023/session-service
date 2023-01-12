@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import com.isd.session.commons.CurrencyEnum;
 import com.isd.session.commons.OutcomeEnum;
 import com.isd.session.dto.BetDTO;
-import com.isd.session.dto.GameDTO;
+import com.isd.session.dto.MatchGambledDTO;
 import com.isd.session.dto.UserDataDTO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,11 +41,11 @@ public class SessionController {
         session.setUserId(100);
 
         // create a list of dummy BetDTO instances and add them to the UserDataDTO listOfBets field
-        GameDTO[]a = {
-            new GameDTO(0, OutcomeEnum.DRAW, 0, 0),
-            new GameDTO(1, OutcomeEnum.AWAY, 0, 0)
+        MatchGambledDTO[]a = {
+            new MatchGambledDTO(0, OutcomeEnum.DRAW, 0, 0),
+            new MatchGambledDTO(1, OutcomeEnum.AWAY, 0, 0)
         };
-        List<GameDTO> listOfGames = Arrays.asList(a);
+        List<MatchGambledDTO> listOfGames = Arrays.asList(a);
         
         BetDTO bet1 = new BetDTO(100, CurrencyEnum.EUR, listOfGames, new Date().getTime());
 
