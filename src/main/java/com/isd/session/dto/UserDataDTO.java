@@ -9,6 +9,7 @@ public class UserDataDTO implements Serializable {
     private static final long serialVersionUID = 6529685099997757690L;
     private Integer userId;
     private List<BetDTO> listOfBets;
+    private String sessionId;
     private static int MAX_BETS = 2;
 
     public UserDataDTO() {
@@ -29,6 +30,14 @@ public class UserDataDTO implements Serializable {
 
     public void setListOfBets(List<BetDTO> listOfBets) {
         this.listOfBets = listOfBets;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public void addBet(BetDTO bet) throws Exception {
@@ -58,9 +67,10 @@ public class UserDataDTO implements Serializable {
     // toString override
     @Override
     public String toString() {
-        return "UserData{" +
+        return "UserDataDTO{" +
                 "userId=" + userId +
                 ", listOfBets=" + listOfBets +
+                ", sessionId='" + sessionId + '\'' +
                 '}';
     }
 
@@ -72,8 +82,16 @@ public class UserDataDTO implements Serializable {
 
         UserDataDTO that = (UserDataDTO) o;
 
-        if (userId != that.userId) return false;
+        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
         return listOfBets != null ? listOfBets.equals(that.listOfBets) : that.listOfBets == null;
+    }
+
+    // hashCode override
+    @Override
+    public int hashCode() {
+        int result = userId != null ? userId.hashCode() : 0;
+        result = 31 * result + (listOfBets != null ? listOfBets.hashCode() : 0);
+        return result;
     }
 }
 
