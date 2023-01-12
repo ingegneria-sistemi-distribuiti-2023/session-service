@@ -1,7 +1,4 @@
 package com.isd.session.dto;
-
-import com.isd.session.dto.BetDTO;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -64,6 +61,15 @@ public class UserDataDTO implements Serializable {
         }
     }
 
+    public BetDTO getBetByBetId(Long ts) throws Exception{
+        for (BetDTO bet: getListOfBets()){
+            if (bet.getTs() == ts){
+                return bet;
+            }
+        }
+        return null;
+    }
+
     // toString override
     @Override
     public String toString() {
@@ -94,4 +100,3 @@ public class UserDataDTO implements Serializable {
         return result;
     }
 }
-
