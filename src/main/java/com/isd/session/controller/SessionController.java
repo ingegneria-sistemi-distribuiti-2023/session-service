@@ -1,6 +1,7 @@
 package com.isd.session.controller;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.sql.Timestamp;
@@ -45,7 +46,7 @@ public class SessionController {
         // the expire timestamp is calculated
         Long expireTimestamp = new Date().getTime() + TimeUnit.HOURS.toMillis(EXPIRE_DELTA);
         // if the session does not exist, a new session is created
-        // the session is creades also if it's present and the expire timestamp is expired
+        // the session is creates also if it's present and the expire timestamp is expired
         // the old session will be deleted
         if(userSession == null || userSession.getEndTime().getTime() < new Date().getTime()) {
             // if the session exists, it is deleted
@@ -85,10 +86,10 @@ public class SessionController {
 
 
     @GetMapping(value="/{userId}")
-    public UserDataDTO getSession(@PathVariable("userId") String userId) {
-        // TODO: refactor this method
+    public UserDataDTO getSession(@PathVariable("userId") Integer userId) {
         // check if a session ID is present in the database using the sessionService
-        SessionDTO userSession = sessionService.getByUserId(Integer.parseInt(userId));
+        SessionDTO userSession = sessionService.getByUserId(userId);
+        UserDataDTO session = null;
 
         // the expire timestamp is calculated
         Long expireTimestamp = new Date().getTime() + TimeUnit.HOURS.toMillis(EXPIRE_DELTA);
@@ -96,23 +97,37 @@ public class SessionController {
         if (userSession != null && userSession.getEndTime().getTime() < new Date().getTime()) {
             sessionService.deleteSession(userSession.getSessionKey());
             // the data stored in the redis database is deleted
-            // TODO: to be confirmed
             redisTemplate.delete(userSession.getSessionKey());
             userSession = null;
         }
         if (userSession == null) {
-            // if the session does not exist or it's expired, an 404 error is returned 
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "entity not found"
-            );
+            // if sessiond does not exist create a new one and return
+
+            SessionDTO sessionDTO = new SessionDTO();
+            sessionDTO.setUserId(userId);
+            sessionDTO.setStartTime(new Timestamp(new Date().getTime()));
+            sessionDTO.setEndTime(new Timestamp(expireTimestamp));
+            // generate a new session id if a new session is being created
+            String sessionKey = UUID.randomUUID().toString();
+            sessionDTO.setSessionKey(sessionKey);
+            sessionService.createSession(sessionDTO);
+
+            // generate userData to save in Redis
+            UserDataDTO newUserData = null;
+            newUserData.setSessionId(sessionKey);
+            newUserData.setListOfBets(new LinkedList<>());
+            newUserData.setUserId(userId);
+
+            redisTemplate.opsForValue().set(sessionKey, newUserData);
+            newUserData.setSessionId(sessionKey);
+            session = newUserData;
         } else {
             // if the session exists, the expire timestamp is updated
             userSession.setEndTime(new Timestamp(expireTimestamp));
             sessionService.updateSession(userSession);
+            // get the session from the redis database
+            session = redisTemplate.opsForValue().get(userSession.getSessionKey());
         }
-
-        // get the session from the redis database
-        UserDataDTO session = redisTemplate.opsForValue().get(userSession.getSessionKey());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
