@@ -113,7 +113,7 @@ public class SessionController {
             sessionService.createSession(sessionDTO);
 
             // generate userData to save in Redis
-            UserDataDTO newUserData = null;
+            UserDataDTO newUserData = new UserDataDTO();
             newUserData.setSessionId(sessionKey);
             newUserData.setListOfBets(new LinkedList<>());
             newUserData.setUserId(userId);

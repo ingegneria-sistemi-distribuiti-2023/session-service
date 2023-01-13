@@ -1,5 +1,5 @@
-# base build command:   docker build -t redis_store:0.01 -f Dockerfile .
-# run command:          docker run -d -p 6379:6379 --name redis_store redis_store:0.01
+# base build command:   docker build -t redis-store:0.01 -f Dockerfile .
+# run command:          docker run -d -p 6379:6379 --name redis-store redis-store:0.01
 FROM redis:3.2.8 as redis
 # setting save and logLevel arguments:
 # save: Redis will save the DB:

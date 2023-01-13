@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  redis_store:
+  redis-store:
     build:
       context: ./redis
       dockerfile: Dockerfile
@@ -10,10 +10,13 @@ services:
     environment:
       - save=3600 1 300 100 60 10000
       - loglevel=verbose
-      - port=36379
+      - port=6379
+    container_name: redis-store
+    networks:
+      - redis-network
     
 
-  session_service:
+  session-service:
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,18 +24,19 @@ services:
     #   session_db:
     #     condition: service_healthy
     # image: session-service:latest
-    restart: always
+    restart: unless-stopped
     ports:
       - 8084:8084
     environment:
-      REDIS_PORT: 36379
-      REDIS_HOST: redis_store
-      JDBC_DATABASE_URL: jdbc:mysql://session_db:3306/sessiondb?allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+      REDIS_PORT: 6379
+      REDIS_HOST: redis-store
+      JDBC_DATABASE_URL: jdbc:mysql://session-db:3306/sessiondb?allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
       JDBC_DATABASE_PASSWORD: admin
       JDBC_DATABASE_USERNAME: admin
     networks:
       - session-network
       - session-db-network
+      - redis-network
     volumes:
       - maven_packages:/root/.m2
 networks: 
@@ -40,6 +44,8 @@ networks:
     name: session-network
   session-db-network:
     name: session-db-network
+  redis-network:
+    name: redis-network
 
 
 volumes:
