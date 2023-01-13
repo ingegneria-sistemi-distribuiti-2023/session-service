@@ -63,7 +63,7 @@ public class UserDataDTO implements Serializable {
 
     public BetDTO getBetByBetId(Long ts) throws Exception{
         for (BetDTO bet: getListOfBets()){
-            if (bet.getTs() == ts){
+            if (bet.getTs().toString().equals(ts.toString())){
                 return bet;
             }
         }
@@ -100,3 +100,4 @@ public class UserDataDTO implements Serializable {
         return result;
     }
 }
+
