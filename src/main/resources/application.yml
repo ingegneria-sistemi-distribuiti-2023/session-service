@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:mysql://localhost:43306/sessiondb?allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC}
-    username: ${JDBC_DATABASE_USERNAME:admin}
-    password: ${JDBC_DATABASE_PASSWORD:admin}
+    url: ${JDBC_DATABASE_URL:jdbc:mysql://localhost:3306/sessiondb?allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC}
+    username: ${JDBC_DATABASE_USERNAME:root}
+    password: ${JDBC_DATABASE_PASSWORD:administrator}
     dbcp2:
       max-wait-millis: 30000
       validation-query: SELECT 1
