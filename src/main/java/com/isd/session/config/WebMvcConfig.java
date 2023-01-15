@@ -1,4 +1,4 @@
-package com.isd.session.commons;
+package com.isd.session.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

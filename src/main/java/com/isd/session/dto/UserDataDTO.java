@@ -1,8 +1,11 @@
 package com.isd.session.dto;
+import com.isd.session.commons.error.CustomHttpResponse;
+import com.isd.session.commons.error.CustomServiceException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,12 +26,12 @@ public class UserDataDTO implements Serializable {
         if (listOfBets.size() <= MAX_BETS) {
             // Iterate through the list of bets
             if (listOfBets.contains(bet)){
-                throw new Exception("Bet is the same");
+                throw new CustomServiceException(new CustomHttpResponse(HttpStatus.BAD_REQUEST, "Bet is the same"));
             }
 
             listOfBets.add(bet);
         } else {
-            throw new Exception("Cannot add more than 3 bets to the list.");
+            throw new CustomServiceException(new CustomHttpResponse(HttpStatus.BAD_REQUEST, "Cannot add more than 3 bets to the list."));
         }
     }
 
@@ -38,17 +41,17 @@ public class UserDataDTO implements Serializable {
             // If it is, remove the bet from the listOfBets
             listOfBets.remove(bet);
         } else {
-            throw new Exception("Bet not found in the list.");
+            throw new CustomServiceException(new CustomHttpResponse(HttpStatus.BAD_REQUEST, "Bet not founded in list"));
         }
     }
 
-    public BetDTO getBetByBetId(Long ts) throws Exception{
+    public BetDTO getBetByBetId(Long ts) throws Exception {
         for (BetDTO bet: getListOfBets()){
             if (bet.getTs().toString().equals(ts.toString())){
                 return bet;
             }
         }
-        return null;
+        throw new CustomServiceException(new CustomHttpResponse(HttpStatus.BAD_REQUEST, "Bet not founded"));
     }
 
 }
