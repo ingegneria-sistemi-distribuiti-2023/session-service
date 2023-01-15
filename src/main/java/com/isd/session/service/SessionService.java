@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class SessionService {
     RedisTemplate<String, UserDataDTO> redisTemplate;
@@ -57,8 +59,8 @@ public class SessionService {
         return SessionConverter.toDTO(session);
     }
 
-    public void deleteSession(String sessionId) {
-        sessionRepository.deleteById(sessionId);
+    public void deleteSession(Integer sessionId) {
+        sessionRepository.deleteBySessionId(sessionId);
     }
 
     public SessionDTO getByUserId(Integer userId) {
@@ -79,7 +81,8 @@ public class SessionService {
         if(userSession == null || userSession.getEndTime().getTime() < new Date().getTime()) {
             // if the session exists, it is deleted
             if(userSession != null) {
-                this.deleteSession(userSession.getSessionKey());
+                sessionRepository.deleteBySessionId(userSession.getSessionId());
+//                this.deleteSession(userSession.getSessionId());
                 // the data stored in the redis database is deleted
                 redisTemplate.delete(userSession.getSessionKey());
             }
@@ -114,7 +117,7 @@ public class SessionService {
         Long expireTimestamp = new Date().getTime() + TimeUnit.HOURS.toMillis(EXPIRE_DELTA);
         // if it's expired the session is deleted
         if (userSession != null && userSession.getEndTime().getTime() < new Date().getTime()) {
-            this.deleteSession(userSession.getSessionKey());
+            sessionRepository.deleteBySessionId(userSession.getSessionId());
             // the data stored in the redis database is deleted
             redisTemplate.delete(userSession.getSessionKey());
             userSession = null;
