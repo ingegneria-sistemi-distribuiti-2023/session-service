@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/sessions")
+@RequestMapping("/session")
 public class SessionController {
     private final SessionService sessionService;
 

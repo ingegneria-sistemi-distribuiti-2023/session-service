@@ -30,3 +30,6 @@ server:
 session:
   expire:
     delta: 24
+app:
+  service:
+    secret: pippo

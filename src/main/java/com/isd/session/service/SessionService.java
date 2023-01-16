@@ -64,7 +64,7 @@ public class SessionService {
     }
 
     public SessionDTO getByUserId(Integer userId) {
-        Session session = sessionRepository.findByUserId(userId);
+        Session session = sessionRepository.findOneByUserId(userId);
         return session != null? SessionConverter.toDTO(session) : null;
     }
 
@@ -78,7 +78,7 @@ public class SessionService {
         // if the session does not exist, a new session is created
         // the session is creates also if it's present and the expire timestamp is expired
         // the old session will be deleted
-        if(userSession == null || userSession.getEndTime().getTime() < new Date().getTime()) {
+        if(userSession == null ) { // TODO: aggiungi controllo ora
             // if the session exists, it is deleted
             if(userSession != null) {
                 sessionRepository.deleteBySessionId(userSession.getSessionId());
@@ -116,7 +116,7 @@ public class SessionService {
         // the expire timestamp is calculated
         Long expireTimestamp = new Date().getTime() + TimeUnit.HOURS.toMillis(EXPIRE_DELTA);
         // if it's expired the session is deleted
-        if (userSession != null && userSession.getEndTime().getTime() < new Date().getTime()) {
+        if (userSession == null) { // TODO: aggiungi controllo ora
             sessionRepository.deleteBySessionId(userSession.getSessionId());
             // the data stored in the redis database is deleted
             redisTemplate.delete(userSession.getSessionKey());
