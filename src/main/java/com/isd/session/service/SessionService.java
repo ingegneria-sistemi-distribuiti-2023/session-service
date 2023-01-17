@@ -5,6 +5,9 @@ import com.isd.session.domain.Session;
 import com.isd.session.dto.SessionDTO;
 import com.isd.session.dto.UserDataDTO;
 import com.isd.session.repository.SessionRepository;
+import org.apache.catalina.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +34,8 @@ import java.util.stream.Collectors;
 public class SessionService {
     RedisTemplate<String, UserDataDTO> redisTemplate;
     private SessionRepository sessionRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionService.class);
 
     @Value("${session.expire.delta}")
     private static int EXPIRE_DELTA;
@@ -68,39 +76,55 @@ public class SessionService {
         return session != null? SessionConverter.toDTO(session) : null;
     }
 
+    public SessionDTO createSessionDtoByUserId(Integer userId, boolean isNew){
+        SessionDTO sessionDTO = new SessionDTO();
+        sessionDTO.setUserId(userId);
+        if (isNew){
+            sessionDTO.setStartTime(new Timestamp(new Date().getTime()));
+        }
+        sessionDTO.setEndTime(new Timestamp(new Date().getTime() + (24 * 60 * 60 * 1000)));
+        // generate a new session id if a new session is being created
+        String sessionKey = UUID.randomUUID().toString();
+        sessionDTO.setSessionKey(sessionKey);
+        this.createSession(sessionDTO);
+        return sessionDTO;
+    }
+
+    public SessionDTO removeSessionIfExpired(SessionDTO userSession){
+        if (userSession != null ){
+
+            Long tsEnd = userSession.getEndTime().getTime();
+
+            long diff = tsEnd - new Date().getTime();
+            if (diff < 0 ) {
+                // it means that is expired
+                LOGGER.info("Expired: true");
+
+                sessionRepository.deleteBySessionId(userSession.getSessionId());
+                // the data stored in the redis database is deleted
+                redisTemplate.delete(userSession.getSessionKey());
+                return null;
+            }
+        }
+        return userSession;
+    }
+
     public UserDataDTO createAndUpdateSession(UserDataDTO dto){
         // check if a session ID is present in the database using the sessionService
         SessionDTO userSession = this.getByUserId(dto.getUserId());
         String sessionKey = null;
 
-        // the expire timestamp is calculated
-        Long expireTimestamp = new Date().getTime() + TimeUnit.HOURS.toMillis(EXPIRE_DELTA);
-        // if the session does not exist, a new session is created
-        // the session is creates also if it's present and the expire timestamp is expired
-        // the old session will be deleted
-        if(userSession == null ) { // TODO: aggiungi controllo ora
-            // if the session exists, it is deleted
-            if(userSession != null) {
-                sessionRepository.deleteBySessionId(userSession.getSessionId());
-//                this.deleteSession(userSession.getSessionId());
-                // the data stored in the redis database is deleted
-                redisTemplate.delete(userSession.getSessionKey());
-            }
-            SessionDTO sessionDTO = new SessionDTO();
-            sessionDTO.setUserId(dto.getUserId());
-            sessionDTO.setStartTime(new Timestamp(new Date().getTime()));
-            sessionDTO.setEndTime(new Timestamp(expireTimestamp));
-            // generate a new session id if a new session is being created
-            sessionKey = UUID.randomUUID().toString();
-            dto.setSessionId(sessionKey);
-            sessionDTO.setSessionKey(sessionKey);
-            this.createSession(sessionDTO);
+        userSession = this.removeSessionIfExpired(userSession);
+
+        if(userSession == null ) {
+            userSession = this.createSessionDtoByUserId(dto.getUserId(), true);
         } else {
-            sessionKey = userSession.getSessionKey();
-            // if the session exists, the expire timestamp is updated
-            userSession.setEndTime(new Timestamp(expireTimestamp));
+            // if the session exists, the expire timestamp is updated after one year
+            userSession.setEndTime(new Timestamp(new Date().getTime() + (24 * 60 * 60 * 1000)));
             this.updateSession(userSession);
         }
+
+        sessionKey = userSession.getSessionKey();
 
         // save the session to the redis database
         redisTemplate.opsForValue().set(sessionKey, dto);
@@ -113,39 +137,21 @@ public class SessionService {
         SessionDTO userSession = this.getByUserId(userId);
         UserDataDTO session = null;
 
-        // the expire timestamp is calculated
-        Long expireTimestamp = new Date().getTime() + TimeUnit.HOURS.toMillis(EXPIRE_DELTA);
-        // if it's expired the session is deleted
-        if (userSession == null) { // TODO: aggiungi controllo ora
-            sessionRepository.deleteBySessionId(userSession.getSessionId());
-            // the data stored in the redis database is deleted
-            redisTemplate.delete(userSession.getSessionKey());
-            userSession = null;
-        }
+        userSession = this.removeSessionIfExpired(userSession);
+
         if (userSession == null) {
             // if sessiond does not exist create a new one and return
-
-            SessionDTO sessionDTO = new SessionDTO();
-            sessionDTO.setUserId(userId);
-            sessionDTO.setStartTime(new Timestamp(new Date().getTime()));
-            sessionDTO.setEndTime(new Timestamp(expireTimestamp));
-            // generate a new session id if a new session is being created
-            String sessionKey = UUID.randomUUID().toString();
-            sessionDTO.setSessionKey(sessionKey);
-            this.createSession(sessionDTO);
-
+            userSession = this.createSessionDtoByUserId(userId, true);
             // generate userData to save in Redis
-            UserDataDTO newUserData = new UserDataDTO();
-            newUserData.setSessionId(sessionKey);
-            newUserData.setListOfBets(new LinkedList<>());
-            newUserData.setUserId(userId);
-
-            redisTemplate.opsForValue().set(sessionKey, newUserData);
-            newUserData.setSessionId(sessionKey);
-            session = newUserData;
+            session = new UserDataDTO();
+            session.setSessionId(userSession.getSessionKey());
+            // initialize an empty array of list of bets, in this way is going to be ready to add bet
+            session.setListOfBets(new LinkedList<>());
+            session.setUserId(userId);
+            redisTemplate.opsForValue().set(userSession.getSessionKey(), session);
         } else {
             // if the session exists, the expire timestamp is updated
-            userSession.setEndTime(new Timestamp(expireTimestamp));
+            userSession.setEndTime(new Timestamp(new Date().getTime() + (24 * 60 * 60 * 1000)));
             this.updateSession(userSession);
             // get the session from the redis database
             session = redisTemplate.opsForValue().get(userSession.getSessionKey());
