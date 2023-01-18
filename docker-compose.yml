@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  redis-store:
+  session-redis-store:
     build:
       context: ./redis
       dockerfile: Dockerfile
@@ -11,7 +11,7 @@ services:
       - save=3600 1 300 100 60 10000
       - loglevel=verbose
       - port=6379
-    container_name: redis-store
+    container_name: session-redis-store
     networks:
       - redis-network
 
@@ -28,7 +28,7 @@ services:
       - 8084:8084
     environment:
       REDIS_PORT: 6379
-      REDIS_HOST: redis-store
+      REDIS_HOST: session-redis-store
       JDBC_DATABASE_URL: jdbc:mysql://session-db:3306/sessiondb?allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
       JDBC_DATABASE_PASSWORD: admin
       JDBC_DATABASE_USERNAME: admin
