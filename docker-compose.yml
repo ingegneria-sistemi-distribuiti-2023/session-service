@@ -14,7 +14,6 @@ services:
     container_name: redis-store
     networks:
       - redis-network
-    
 
   session-service:
     build:
@@ -39,6 +38,8 @@ services:
       - redis-network
     volumes:
       - maven_packages:/root/.m2
+    container_name: session-service
+
 networks: 
   session-network:
     name: session-network
