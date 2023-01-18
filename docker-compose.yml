@@ -2,9 +2,10 @@ version: '3.7'
 
 services:
   session-redis-store:
-    build:
-      context: ./redis
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./redis
+    #   dockerfile: Dockerfile
+    image: khalld/session-redis-store:latest
     volumes:
       - redis_data:/data
     environment:
@@ -16,9 +17,10 @@ services:
       - redis-network
 
   session-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+      # context: .
+      # dockerfile: Dockerfile
+    image: khalld/session-service:latest
     # depends_on: # TODO: this will not be managed by docker-compose if db and service are in different stacks
     #   session_db:
     #     condition: service_healthy
