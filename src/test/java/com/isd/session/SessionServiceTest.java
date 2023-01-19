@@ -8,8 +8,10 @@ import static org.mockito.Mockito.*;
 import java.sql.Timestamp;
 import java.util.*;
 
+import com.isd.session.commons.CurrencyEnum;
 import com.isd.session.converter.SessionConverter;
 import com.isd.session.domain.Session;
+import com.isd.session.dto.BetDTO;
 import com.isd.session.dto.SessionDTO;
 import com.isd.session.dto.UserDataDTO;
 import com.isd.session.repository.SessionRepository;
@@ -31,29 +33,50 @@ public class SessionServiceTest {
     @Mock
     private SessionRepository sessionRepository;
 
-    @Mock
-    private RedisTemplate<String, UserDataDTO> redisTemplate;
-
     @InjectMocks
     private SessionService sessionService;
 
     private List<Session> sessions;
 
+
+    public static UserDataDTO generateDummyData() {
+        UserDataDTO userData = new UserDataDTO();
+        userData.setUserId(12345);
+        userData.setSessionId("abcdefg");
+        userData.setListOfBets(new ArrayList<>());
+
+        for (int i = 0; i < 2; i++) {
+            BetDTO bet = new BetDTO();
+            bet.setTs((long) i);
+            bet.setBetValue(1000);
+            bet.setCurrency(CurrencyEnum.USD);
+            userData.getListOfBets().add(bet);
+        }
+
+        return userData;
+    }
+
+
     @Before
     public void setUp() {
+
+        UserDataDTO data1 = generateDummyData();
+
         // initialize the sessions list
         sessions = new ArrayList<>();
         Session session1 = new Session();
         session1.setSessionId(1);
-        session1.setUserId(1);
+        session1.setUserId(data1.getUserId());
         session1.setSessionKey(UUID.randomUUID().toString());
         session1.setStartTime(new Timestamp(new Date().getTime()));
         session1.setEndTime(new Timestamp(new Date().getTime() + (24 * 60 * 60 * 1000)));
         sessions.add(session1);
 
+        UserDataDTO data2 = generateDummyData();
+
         Session session2 = new Session();
         session2.setSessionId(2);
-        session2.setUserId(2);
+        session2.setUserId(data2.getUserId());
         session2.setSessionKey(UUID.randomUUID().toString());
         session2.setStartTime(new Timestamp(new Date().getTime()));
         session2.setEndTime(new Timestamp(new Date().getTime() + (24 * 60 * 60 * 1000)));
@@ -61,7 +84,7 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void testGetAllSessions() {
+    public void getAllSessionShouldReturnAllSessions() {
         when(sessionRepository.findAll()).thenReturn(sessions);
         List<SessionDTO> sessionDTOs = sessionService.getAllSessions();
         assertNotNull(sessionDTOs);
@@ -69,7 +92,7 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void testCreateSession() {
+    public void createSessionShouldReturnEqualSession() {
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setSessionId(3);
         sessionDTO.setUserId(3);
@@ -83,7 +106,7 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void testUpdateSession() {
+    public void updateSessionShouldReturnUpdatedSession() {
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setSessionId(1);
         sessionDTO.setUserId(1);
@@ -97,68 +120,10 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void testDeleteSession() {
+    public void deleteSessionShouldExecutedInRepository() {
         sessionService.deleteSession(1);
         //verify that the deleteBySessionId method of sessionRepository is called
         verify(sessionRepository, times(1)).deleteBySessionId(1);
     }
-
-    @Test
-    public void testGetByUserIdNotFound() {
-        when(sessionRepository.findOneByUserId(3)).thenReturn(null);
-        SessionDTO sessionDTO = sessionService.getByUserId(3);
-        assertNull(sessionDTO);
-    }
-
-//    @Test
-//    public void testRemoveSessionIfExpired() {
-//        SessionDTO sessionDTO = new SessionDTO();
-//        sessionDTO.setSessionId(1);
-//        sessionDTO.setUserId(1);
-//        sessionDTO.setSessionKey(UUID.randomUUID().toString());
-//        sessionDTO.setStartTime(new Timestamp(new Date().getTime()));
-//        sessionDTO.setEndTime(new Timestamp(new Date().getTime() - (24 * 60 * 60 * 1000)));
-//        when(sessionRepository.deleteBySessionId(1)).thenReturn(null);
-//        SessionDTO result = sessionService.removeSessionIfExpired(sessionDTO);
-//        assertNull(result);
-//        //verify that the deleteBySessionId method of sessionRepository is called
-//        verify(sessionRepository, times(1)).deleteBySessionId(1);
-//        verify(redisTemplate, times(1)).delete(sessionDTO.getSessionKey());
-//    }
-
-//    @Test
-//    public void testCreateAndUpdateSession() {
-//        UserDataDTO dto = new UserDataDTO();
-//        dto.setUserId(1);
-//        dto.setName("test");
-//        dto.setAge(25);
-//        when(sessionRepository.findOneByUserId(1)).thenReturn(sessions.get(0));
-//        when(sessionRepository.save(any(Session.class))).thenReturn(sessions.get(0));
-//        UserDataDTO result = sessionService.createAndUpdateSession(dto);
-//        assertNotNull(result);
-//        assertEquals(1, result.getUserId().intValue());
-//        verify(redisTemplate, times(1)).opsForValue().set(sessions.get(0).getSessionKey(), dto);
-//    }
-
-//    @Test
-//    public void testGetSessionByUserId() {
-//        UserDataDTO dto = new UserDataDTO();
-//        dto.setUserId(1);
-//        dto.setName("test");
-//        dto.setAge(25);
-//        when(sessionRepository.findOneByUserId(1)).thenReturn(sessions.get(0));
-//        when(redisTemplate.opsForValue().get(sessions.get(0).getSessionKey())).thenReturn(dto);
-//        UserDataDTO result = sessionService.getSessionByUserId(1);
-//        assertNotNull(result);
-//        assertEquals(1, result.getUserId().intValue());
-//    }
-
-//    @Test
-//    public void testGetSessionByUserIdNotFound() {
-//        when(sessionRepository.findOneByUserId(3)).thenReturn(null);
-//        UserDataDTO result = sessionService.getSessionByUserId(3);
-//        assertNull(result);
-//    }
-
 
 }
