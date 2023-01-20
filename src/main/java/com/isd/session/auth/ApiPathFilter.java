@@ -26,6 +26,13 @@ public class ApiPathFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        String path = request.getServletPath();
+
+        if (path.contains("swagger") || path.equals("/v3/api-docs")  || path.equals("/favicon.ico") ){
+            // Non bisogna gestire la get dell'Header
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String secretFromApp = request.getHeader(SECRET_HEADER);
 
