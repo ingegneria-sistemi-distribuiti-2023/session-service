@@ -5,6 +5,7 @@ import com.isd.session.domain.Session;
 import com.isd.session.dto.SessionDTO;
 import com.isd.session.dto.UserDataDTO;
 import com.isd.session.repository.SessionRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,19 +32,15 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service
+@RequiredArgsConstructor
 public class SessionService {
-    RedisTemplate<String, UserDataDTO> redisTemplate;
-    private SessionRepository sessionRepository;
+    private final RedisTemplate<String, UserDataDTO> redisTemplate;
+    private final SessionRepository sessionRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionService.class);
 
     @Value("${session.expire.delta}")
     private static int EXPIRE_DELTA;
-
-    public SessionService(RedisTemplate<String, UserDataDTO> redisTemplate, SessionRepository sessionRepository) {
-        this.redisTemplate = redisTemplate;
-        this.sessionRepository = sessionRepository;
-    }
 
     public List<SessionDTO> getAllSessions() {
         List<Session> sessions = sessionRepository.findAll();
