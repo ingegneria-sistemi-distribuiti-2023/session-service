@@ -116,7 +116,7 @@ public class SessionService {
         if(userSession == null ) {
             userSession = this.createSessionDtoByUserId(dto.getUserId(), true);
         } else {
-            // if the session exists, the expire timestamp is updated after one year
+            // if the session exists, the expire timestamp is updated after one day
             userSession.setEndTime(new Timestamp(new Date().getTime() + (24 * 60 * 60 * 1000)));
             this.updateSession(userSession);
         }
