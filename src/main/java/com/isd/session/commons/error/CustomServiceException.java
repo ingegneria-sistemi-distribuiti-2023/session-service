@@ -3,6 +3,9 @@ package com.isd.session.commons.error;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/*
+ * Custom Exception used to handle error on Request
+ */
 @Data
 @NoArgsConstructor
 public class CustomServiceException extends Exception {

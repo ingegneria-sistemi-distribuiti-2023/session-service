@@ -1,7 +1,6 @@
 package com.isd.session;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -21,9 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -38,7 +35,9 @@ public class SessionServiceTest {
 
     private List<Session> sessions;
 
-
+    /*
+     * Util function that generate fake data used to make tests
+     */
     public static UserDataDTO generateDummyData() {
         UserDataDTO userData = new UserDataDTO();
         userData.setUserId(12345);
@@ -83,6 +82,9 @@ public class SessionServiceTest {
         sessions.add(session2);
     }
 
+    /*
+     * getAllSessions() must return all session avaiable
+     */
     @Test
     public void getAllSessionShouldReturnAllSessions() {
         when(sessionRepository.findAll()).thenReturn(sessions);
@@ -91,6 +93,9 @@ public class SessionServiceTest {
         assertEquals(2, sessionDTOs.size());
     }
 
+    /*
+     * save() must save all information
+     */
     @Test
     public void createSessionShouldReturnEqualSession() {
         SessionDTO sessionDTO = new SessionDTO();
@@ -105,6 +110,9 @@ public class SessionServiceTest {
         assertEquals(3, result.getSessionId().intValue());
     }
 
+    /*
+     * save() must update existing session
+     */
     @Test
     public void updateSessionShouldReturnUpdatedSession() {
         SessionDTO sessionDTO = new SessionDTO();
@@ -119,6 +127,9 @@ public class SessionServiceTest {
         assertEquals(1, result.getSessionId().intValue());
     }
 
+    /*
+     * deleteSession() must delete on db
+     */
     @Test
     public void deleteSessionShouldExecutedInRepository() {
         sessionService.deleteSession(1);

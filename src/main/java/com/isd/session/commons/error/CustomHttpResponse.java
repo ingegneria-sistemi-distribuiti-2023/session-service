@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
+/*
+ * Custom API response
+ */
 @Data
 @NoArgsConstructor
 public class CustomHttpResponse implements Serializable {
